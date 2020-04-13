@@ -77,7 +77,40 @@ namespace LinqDemoPart2 {
             Console.WriteLine("Single or Default test1: " + r8);
             var r9 = produtos.Where(p => p.Id == 30).SingleOrDefault();
             Console.WriteLine("Single or Default test2: " + r9);
+            Console.WriteLine(); ///////////////////////////////
+            //aqui vemos o preço maximo comparando o produto pelo preço. 
+            var r10 = produtos.Max(p => p.Preco);
+            Console.WriteLine("Preço Maximo: " + r10);
+            //aqui vemos o preço Min comparando o produto pelo preço. 
+            var r11 = produtos. Min(p => p.Preco);
+            Console.WriteLine("Preço Maximo: " + r11);
+            //aqui vemos a soma dos preços pela categoria 1
+            var r12 = produtos.Where(p => p.Categoria.Id == 1).Sum(p => p.Preco);
+            Console.WriteLine("Categoria 1 Soma dos Preços: " + r12);
+            //aqui vemos a media dos preços pela categoria 1
+            var r13 = produtos.Where(p => p.Categoria.Id == 1).Average(p => p.Preco);
+            Console.WriteLine("Categoria 1 Media dos Preços: " + r13);
+            //aqui vamos testar com uma categoria que não existe. ira testar o select e caso não retorne nada
+            //o valor é acrescentado em 0.0 como o defaultIfEmpty. caso exista alguma informação ele fará a média 
+            //pelo select que foi informado, não tendo a necessidade de colocar a expressão lambda dentro do average.
+            var r14 = produtos.Where(p => p.Categoria.Id == 5).Select(p => p.Preco).DefaultIfEmpty(0.0).Average();
+            Console.WriteLine("Categoria 1 Media dos Preços caso o resultado não exista: " + r14);
+            //aqui fizemos todo o filtro, no select pegamos qual campo eu quero usar e no final agregamos uma função 
+            //para somar valores de x e y. e iniciando com 0.
+            //aggregate em outras linguagens é o "reduce" ele serve para montar uma operação agregada personalizada.
+            var r15 = produtos.Where(p => p.Categoria.Id == 1).Select(p => p.Preco).Aggregate(0.0, (x, y) => x + y);
+            Console.WriteLine("Categoria 1 Agregando a função soma: " + r15);
             Console.WriteLine();
+            //agrupar os produtos por categoria
+            var r16 = produtos.GroupBy(p => p.Categoria);
+            //percorremos cada elemento, e ele é do tipo abaixo.
+            foreach (IGrouping<Categoria, Produto> grupo in r16){
+                Console.WriteLine("Categoria 1 Agregando a função soma: " + grupo.Key.Nome + ":");
+                foreach(Produto p in grupo) {
+                    Console.WriteLine(p);
+                }
+                Console.WriteLine();
+            }
         }
     }
 }
