@@ -46,25 +46,52 @@ namespace LinqDemoPart2 {
             //usamos o Linq e o lambda para fazer isso 
             //var r1 recebe a lista de produtos where (predicado, P tal que "=>" p.categoria.tier seja igual a 1
             // E p.preco seja menor que 900.00
-            var r1 = produtos.Where(p => p.Categoria.Tier == 1 && p.Preco < 900.0);
+            //var r1 = produtos.Where(p => p.Categoria.Tier == 1 && p.Preco < 900.0); ************************
+            //AQUI IREMOS COLOCAR A VERSÃO COM SINTAXE ALTERNATIVA PARA O LINQ COM SQL
+            var r1 = from p in produtos
+                     where p.Categoria.Tier == 1 && p.Preco < 900.00
+                     select p;
             //aqui iremos usar a função para imprimir a mensagem em "" e depois o r1
             Print("TIER1 AND PRICE < 900:", r1);
             //aqui filtramos a categoria onde Nome da categoria seja igual a ferramentas, e iremos selecionar
             //somente o nome para ser exibido.
-            var r2 = produtos.Where(p => p.Categoria.Nome == "Ferramentas").Select(p => p.Nome);
+            //var r2 = produtos.Where(p => p.Categoria.Nome == "Ferramentas").Select(p => p.Nome); *******************
+            //AQUI IREMOS COLOCAR A VERSÃO COM SINTAXE ALTERNATIVA PARA O LINQ COM SQL
+            var r2 = from p in produtos
+                     where p.Categoria.Nome == "Ferramentas"
+                     select p.Nome;
             Print("NAMES OF PRODUCTS FROM TOOLS", r2);
             //O primeiro [0] caracter do p.nome for igual a C, usando o select, vamos colocar um objeto anonimo que
             //é um objeto que não é encontrado em nenhuma das classes, usando o new criamos um "construtor" pegando o que eu quero
             //alem disso precisamos dar apelido no categoria.nome, pq o compilador vai dar erro ja que temos 2 tipos de dados
             //na mesma sentença, p.nome e p.categoria.nome.
-            var r3 = produtos.Where(p => p.Nome[0] == 'C').Select(p => new { p.Nome, p.Preco, CategoriaNome = p.Categoria.Nome });
+            //var r3 = produtos.Where(p => p.Nome[0] == 'C').Select(p => new { p.Nome, p.Preco, CategoriaNome = p.Categoria.Nome }); ***********************
+            //AQUI IREMOS COLOCAR A VERSÃO COM SINTAXE ALTERNATIVA PARA O LINQ COM SQL
+            var r3 = from p in produtos
+                     where p.Nome[0] == 'C'
+                     select new {
+                         p.Nome,
+                         p.Preco,
+                         CategoriaNome = p.Categoria.Nome
+                     };
             Print("NAMES STARTED WITH 'C' AND ANONYMOUS OBJECT", r3);
             //pegamos o p.categoria.tier 1 e o ordenar por preço, se o preço for igual usando o thenby para uma segunda ordenação
             //a de nome.
-            var r4 = produtos.Where(p => p.Categoria.Tier == 1).OrderBy(p => p.Preco).ThenBy(p => p.Nome);
+            //var r4 = produtos.Where(p => p.Categoria.Tier == 1).OrderBy(p => p.Preco).ThenBy(p => p.Nome); ****************************
+            //AQUI IREMOS COLOCAR A VERSÃO COM SINTAXE ALTERNATIVA PARA O LINQ COM SQL
+            var r4 = from p in produtos
+                     where p.Categoria.Tier == 1
+                     orderby p.Nome
+                     orderby p.Preco
+                     select p;
             Print("NAMES STARTED WITH 'C' AND ANONYMOUS OBJECT", r4);
             //aqui pulamos os 2 primeiros e pegue somente os 4 elementos depois que pulou.
-            var r5 = r4.Skip(2).Take(4);
+            //var r5 = r4.Skip(2).Take(4); ***************************
+            //AQUI IREMOS COLOCAR A VERSÃO COM SINTAXE ALTERNATIVA PARA O LINQ COM SQL
+            var r5 = (from p in r4
+                      select p)
+                      .Skip(2)
+                      .Take(4);                      
             Print("TIER 1 ORDER BY PRICE THEN BY NAME SKIP 2 TAKE 4", r5);
             //se não encontrar nenhum produto, ele retorna nulo para não ocorrer erros se tivesse colocado somente o First().
             var r6 = produtos.FirstOrDefault();
@@ -102,7 +129,10 @@ namespace LinqDemoPart2 {
             Console.WriteLine("Categoria 1 Agregando a função soma: " + r15);
             Console.WriteLine();
             //agrupar os produtos por categoria
-            var r16 = produtos.GroupBy(p => p.Categoria);
+            //var r16 = produtos.GroupBy(p => p.Categoria); *********************************************************
+            //AQUI IREMOS COLOCAR A VERSÃO COM SINTAXE ALTERNATIVA PARA O LINQ COM SQL
+            var r16 = from p in produtos
+                      group p by p.Categoria;
             //percorremos cada elemento, e ele é do tipo abaixo.
             foreach (IGrouping<Categoria, Produto> grupo in r16){
                 Console.WriteLine("Categoria 1 Agregando a função soma: " + grupo.Key.Nome + ":");
